@@ -4,7 +4,7 @@ $(document).ready(function () {
       url: '/data',
       dataSrc: function (json) {
         console.log("Loaded data:", json);
-        return json.length ? json : []; // fallback for bad/empty loads
+        return json.length ? json : [];
       },
       error: function (xhr, error, thrown) {
         console.error("AJAX Error:", error, thrown);
@@ -35,34 +35,35 @@ $(document).ready(function () {
       if (data.Session === "2025-2026" && data.Author === "Rubio") {
         $(row).addClass("highlight-current");
       }
-    }
-  });
+    },
+    initComplete: function () {
+      console.log("Table fully loaded, building filters.");
+      function buildDropdown(selector, colIdx, label) {
+        const select = $(selector);
+        select.empty().append(`<option value="">All ${label}</option>`);
+        const uniqueValues = new Set();
 
-  function filterDropdown(id, colIdx, label) {
-    const select = $(id);
-    select.empty().append(`<option value="">All ${label}</option>`);
-    table.column(colIdx).data().unique().sort().each(function (d) {
-      const text = $('<div>').html(d).text().trim();
-      if (text) select.append(`<option value="${text}">${text}</option>`);
-    });
-    select.on("change", function () {
-      table.column(colIdx).search(this.value).draw();
-    });
-  }
+        table.column(colIdx).data().each(function (d) {
+          const text = $('<div>').html(d).text().trim();
+          if (text) uniqueValues.add(text);
+        });
 
-  $.getJSON('/data', function (data) {
-    if (data.length === 0) {
-      console.warn("No data returned from /data.");
-    } else {
-      console.log("Populating filters with", data.length, "rows.");
-    }
-    setTimeout(function () {
-      filterDropdown('#sessionFilter', 0, "Sessions");
-      filterDropdown('#statusFilter', 4, "Statuses");
-      filterDropdown('#authorFilter', 2, "Authors");
+        Array.from(uniqueValues).sort().forEach(function (val) {
+          select.append(`<option value="${val}">${val}</option>`);
+        });
+
+        select.on("change", function () {
+          table.column(colIdx).search(this.value).draw();
+        });
+      }
+
+      buildDropdown('#sessionFilter', 0, "Sessions");
+      buildDropdown('#statusFilter', 4, "Statuses");
+      buildDropdown('#authorFilter', 2, "Authors");
+
       $('#sessionFilter').val('2025-2026').trigger('change');
       $('#authorFilter').val('Rubio').trigger('change');
-    }, 50);
+    }
   });
 
   $('#clearFilters').on('click', function () {
