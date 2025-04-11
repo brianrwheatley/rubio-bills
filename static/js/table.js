@@ -1,6 +1,15 @@
 $(document).ready(function () {
   const table = $('#billsTable').DataTable({
-    ajax: '/data',
+    ajax: {
+      url: '/data',
+      dataSrc: function (json) {
+        console.log("Loaded data:", json);
+        return json.length ? json : []; // fallback for bad/empty loads
+      },
+      error: function (xhr, error, thrown) {
+        console.error("AJAX Error:", error, thrown);
+      }
+    },
     columns: [
       { data: 'Session' },
       {
@@ -29,34 +38,32 @@ $(document).ready(function () {
     }
   });
 
-  function filterDropdown(id, colIdx) {
-    $(id).on("change", function () {
+  function filterDropdown(id, colIdx, label) {
+    const select = $(id);
+    select.empty().append(`<option value="">All ${label}</option>`);
+    table.column(colIdx).data().unique().sort().each(function (d) {
+      const text = $('<div>').html(d).text().trim();
+      if (text) select.append(`<option value="${text}">${text}</option>`);
+    });
+    select.on("change", function () {
       table.column(colIdx).search(this.value).draw();
     });
   }
 
-  function populateFilters(data) {
-    const sessionSet = new Set(), statusSet = new Set(), authorSet = new Set();
-    data.forEach(row => {
-      if (row.Session) sessionSet.add(row.Session);
-      if (row.Status) statusSet.add(row.Status);
-      if (row.Author) authorSet.add(row.Author);
-    });
-
-    for (const val of [...sessionSet].sort()) $('#sessionFilter').append(`<option value="${val}">${val}</option>`);
-    for (const val of [...statusSet].sort()) $('#statusFilter').append(`<option value="${val}">${val}</option>`);
-    for (const val of [...authorSet].sort()) $('#authorFilter').append(`<option value="${val}">${val}</option>`);
-  }
-
   $.getJSON('/data', function (data) {
-    populateFilters(data);
-    $('#sessionFilter').val('2025-2026').trigger('change');
-    $('#authorFilter').val('Rubio').trigger('change');
+    if (data.length === 0) {
+      console.warn("No data returned from /data.");
+    } else {
+      console.log("Populating filters with", data.length, "rows.");
+    }
+    setTimeout(function () {
+      filterDropdown('#sessionFilter', 0, "Sessions");
+      filterDropdown('#statusFilter', 4, "Statuses");
+      filterDropdown('#authorFilter', 2, "Authors");
+      $('#sessionFilter').val('2025-2026').trigger('change');
+      $('#authorFilter').val('Rubio').trigger('change');
+    }, 50);
   });
-
-  filterDropdown('#sessionFilter', 0);
-  filterDropdown('#statusFilter', 4);
-  filterDropdown('#authorFilter', 2);
 
   $('#clearFilters').on('click', function () {
     $('#sessionFilter, #statusFilter, #authorFilter').val('');
