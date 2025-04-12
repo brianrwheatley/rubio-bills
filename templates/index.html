@@ -1,173 +1,151 @@
+
 <!DOCTYPE html>
 <html lang="en">
- <head>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0, user-scalable=no" name="viewport"/>
-  <title>
-   Senator Susan Rubio Legislation
-  </title>
-  <link href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" rel="stylesheet"/>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Senator Susan Rubio Legislation</title>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" />
   <style>
-   body {
-            font-family: Arial, sans-serif;
-            padding: 8px;
-            margin: 0;
-            background-color: #ffffff;
-        }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
 
-        h1 {
-            font-size: 2rem;
-            margin-bottom: 0.5em;
-        }
+    .container {
+      padding: 24px;
+    }
 
-        .filters {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            align-items: flex-start;
-        }
+    .filters-row, .checkboxes-row, .clear-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
 
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            min-width: 200px;
-        }
+    .filters-row > div,
+    .checkboxes-row > div,
+    .clear-row > div {
+      flex: 1;
+    }
 
-        .checkbox-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-top: 0.5rem;
-        }
+    .checkboxes-row {
+      justify-content: space-between;
+    }
 
-        #clearFilters {
-            margin-top: 1rem;
-            align-self: flex-end;
-            padding: 0.5rem 1rem;
-            background-color: #666;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
+    .clear-row {
+      justify-content: flex-end;
+    }
 
-        table.dataTable tbody tr.highlight-current td {
-            background-color: #d8f5d0 !important;
-        }
+    .mobile-adjust {
+      margin-bottom: 6px;
+    }
 
-        table.dataTable tbody tr.highlight-vetoed td {
-            background-color: #f9d6d5 !important;
-        }
+    table.dataTable {
+      width: 100% !important;
+    }
 
-        table.dataTable tbody tr.highlight-nonrubio-current td {
-            background-color: #fff4cc !important;
-        }
+    .highlight-current {
+      background-color: #d5f5d5 !important;
+    }
 
-        table.dataTable tbody tr.odd td,
-        table.dataTable tbody tr.even td {
-            background-color: transparent !important;
-        }
+    .highlight-nonrubio-current {
+      background-color: #fff9d6 !important;
+    }
 
-        @media (max-width: 768px) {
-            body {
-                padding-left: 6px;
-                padding-right: 6px;
-            }
+    .highlight-vetoed {
+      background-color: #f8d7da !important;
+    }
 
-            table.dataTable {
-                font-size: 0.85rem;
-            }
+    table.dataTable tbody tr.odd td,
+    table.dataTable tbody tr.even td {
+      background-color: transparent !important;
+    }
 
-            .filters {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
+    @media screen and (max-width: 768px) {
+      body {
+        padding-left: 4px;
+        padding-right: 4px;
+        font-size: 16px;
+      }
 
-            #clearFilters {
-                align-self: center;
-            }
-        }
+      #billsTable_wrapper {
+        padding-left: 4px;
+        padding-right: 4px;
+        transform: scale(0.9);
+        transform-origin: top left;
+      }
+
+      table.dataTable {
+        width: auto !important;
+      }
+
+      .filters-row,
+      .checkboxes-row,
+      .clear-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .clear-row {
+        align-items: flex-end;
+      }
+    }
   </style>
- </head>
- <body>
-  <h1>
-   Senator Susan Rubio Legislation
-  </h1>
-  <div class="filters">
-   <div class="filter-group">
-    <label for="sessionFilter">
-     Filter by Session
-    </label>
-    <select id="sessionFilter">
-     <option>
-      All Sessions
-     </option>
-    </select>
-   </div>
-   <div class="filter-group">
-    <label for="statusFilter">
-     Filter by Status
-    </label>
-    <select id="statusFilter">
-     <option>
-      All Statuses
-     </option>
-    </select>
-   </div>
-   <div class="filter-group">
-    <label for="authorFilter">
-     Filter by Author
-    </label>
-    <select id="authorFilter">
-     <option>
-      All Authors
-     </option>
-    </select>
-   </div>
-   <div class="checkbox-group">
-    <label>
-     <input id="currentSession" type="checkbox"/>
-     Current Session Bills
-    </label>
-    <label>
-     <input id="includeVetoed" type="checkbox"/>
-     Include Vetoed Bills
-    </label>
-    <label>
-     <input checked="" id="rubioBills" type="checkbox"/>
-     Senator Rubio Bills
-    </label>
-   </div>
-   <button id="clearFilters">
-    Clear Filters
-   </button>
+</head>
+<body>
+  <div class="container">
+    <h1>Senator Susan Rubio Legislation</h1>
+
+    <div class="filters-row">
+      <div>
+        <label for="sessionFilter">Filter by Session</label>
+        <select id="sessionFilter" class="mobile-adjust">
+          <option value="">All Sessions</option>
+        </select>
+      </div>
+      <div>
+        <label for="statusFilter">Filter by Status</label>
+        <select id="statusFilter" class="mobile-adjust">
+          <option value="">All Statuses</option>
+        </select>
+      </div>
+      <div>
+        <label for="authorFilter">Filter by Author</label>
+        <select id="authorFilter" class="mobile-adjust">
+          <option value="">All Authors</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="checkboxes-row">
+      <div><input type="checkbox" id="currentSessionCheckbox" checked /> Current Session Bills</div>
+      <div><input type="checkbox" id="vetoedCheckbox" /> Include Vetoed Bills</div>
+      <div><input type="checkbox" id="rubioCheckbox" checked /> Senator Rubio Bills</div>
+    </div>
+
+    <div class="clear-row">
+      <button id="clearFilters">Clear Filters</button>
+    </div>
+
+    <table id="billsTable" class="display">
+      <thead>
+        <tr>
+          <th>Session</th>
+          <th>Bill</th>
+          <th>Author</th>
+          <th>Subject</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
-  <table class="display" id="billsTable" style="width:100%">
-   <thead>
-    <tr>
-     <th>
-      Session
-     </th>
-     <th>
-      Bill
-     </th>
-     <th>
-      Author
-     </th>
-     <th>
-      Subject
-     </th>
-     <th>
-      Status
-     </th>
-    </tr>
-   </thead>
-  </table>
-  <script src="https://code.jquery.com/jquery-3.7.0.js">
-  </script>
-  <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js">
-  </script>
-  <script src="/static/js/table.js">
-  </script>
- </body>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+  <script src="/static/js/table.js"></script>
+</body>
 </html>
