@@ -10,16 +10,30 @@ def load_data():
 
     historical.columns = historical.columns.str.strip()
     present.columns = present.columns.str.strip()
+
+    # Remove 2025-2026 from historical file
     historical = historical[historical["Session"] != 20252026]
 
+    # Combine and clean
     df = pd.concat([present, historical], ignore_index=True)
-    df = df[(df["Version"] == "Chaptered") | (df["Session"] == 20252026)].copy()
-    df["Session"] = df["Session"].astype(str).str[:4] + "-" + df["Session"].astype(str).str[4:]
+
+    # Only include sessions 2019 and later
+    df["Session"] = df["Session"].astype(str)
+    df = df[df["Session"].str[:4].astype(int) >= 2019]
+
+    # Keep Chaptered or 2025-2026
+    df = df[(df["Version"] == "Chaptered") | (df["Session"] == "20252026")].copy()
+
+    # Format and clean
+    df["Session"] = df["Session"].str[:4] + "-" + df["Session"].str[4:]
     df.fillna("", inplace=True)
     df.loc[df["Version"] == "Chaptered", "Status"] = df.loc[df["Version"] == "Chaptered", "Status"].replace("", "Passed")
     df.drop(columns=["Version"], inplace=True)
     df.rename(columns={"Measure": "Bill"}, inplace=True)
+
+    # Add link
     df["Bill_link"] = df.apply(lambda row: f"https://leginfo.legislature.ca.gov/faces/billNavClient.xhtml?bill_id={row['Session'].replace('-', '')}0{row['Bill'].replace('-', '')}", axis=1)
+
     return df
 
 @app.route("/")
