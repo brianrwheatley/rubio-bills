@@ -36,7 +36,7 @@ def load_data():
     df.rename(columns={"Measure": "Bill"}, inplace=True)
 
     # Add link
-    df["Bill_link"] = df.apply(lambda row: f"https://leginfo.legislature.ca.gov/faces/billNavClient.xhtml?bill_id={row['Session'].replace('-', '')}0{row['Bill'].replace('-', '')}", axis=1)
+    df["Bill_link"] = df.apply(lambda row: f"https://leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id={row['Session'].replace('-', '')}0{row['Bill'].replace('-', '')}", axis=1)
 
     print(f"Loaded {len(df)} bills")
     return df
