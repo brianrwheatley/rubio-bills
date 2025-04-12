@@ -7,43 +7,91 @@
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
   <style>
     body { padding: 2rem; }
+
     tr.highlight-current td {
-      background-color: #eaffea !important;
+      background-color: #dff8df !important;
+    }
+    tr.highlight-nonrubio-current td {
+      background-color: #fffef9 !important;
+    }
+    tr.highlight-vetoed td {
+      background-color: #ffecec !important;
+    }
+
+    /* Disable alternating row stripe color unless highlighted */
+    table.dataTable tbody tr:not(.highlight-current):not(.highlight-vetoed):not(.highlight-nonrubio-current) td {
+      background-color: transparent !important;
+    }
+
+    .form-check {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .checkbox-label {
+      margin: 0;
+    }
+    #customSearchContainer {
+      text-align: right;
+      margin-bottom: 0.75rem;
+    }
+    div.dataTables_filter {
+      display: none !important;
     }
   </style>
 </head>
 <body>
   <div class="container">
+    <div id="customSearchContainer"></div>
+
     <h1 class="mb-4">Senator Susan Rubio Legislation</h1>
-    <div class="row mb-3">
-      <div class="col-md-3">
+
+    <!-- FILTER ROW -->
+    <div class="row mb-3 align-items-end">
+      <div class="col-md-4">
         <label class="form-label">Filter by Session</label>
         <select id="sessionFilter" class="form-select"></select>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-4">
         <label class="form-label">Filter by Status</label>
         <select id="statusFilter" class="form-select"></select>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-4">
         <label class="form-label">Filter by Author</label>
         <select id="authorFilter" class="form-select"></select>
       </div>
-      <div class="col-md-3 d-flex align-items-end justify-content-end">
+    </div>
+
+    <!-- CHECKBOX ROW -->
+    <div class="row mb-2 align-items-center">
+      <div class="col-md-4">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="rubioCurrentToggle" checked>
+          <label class="form-check-label checkbox-label" for="rubioCurrentToggle">Current Session Bills</label>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="vetoedToggle">
+          <label class="form-check-label checkbox-label" for="vetoedToggle">Include Vetoed Bills</label>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="rubioAuthorToggle" checked>
+          <label class="form-check-label checkbox-label" for="rubioAuthorToggle">Senator Rubio Bills</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLEAR FILTER BUTTON ROW -->
+    <div class="row mb-4">
+      <div class="col text-end">
         <button id="clearFilters" class="btn btn-secondary">Clear Filters</button>
       </div>
     </div>
 
-    <div class="row mb-3 justify-content-between">
-      <div class="col-md-6">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="rubioCurrentToggle" checked>
-          <label class="form-check-label" for="rubioCurrentToggle">Current Session Bills</label>
-        </div>
-      </div>
-      <div class="col-md-6 text-end" id="customSearchWrapper"></div>
-    </div>
-
-    <table id="billsTable" class="display table table-striped" style="width:100%">
+    <table id="billsTable" class="display table" style="width:100%">
       <thead>
         <tr>
           <th>Session</th><th>Bill</th><th>Author</th><th>Subject</th><th>Status</th>
@@ -54,6 +102,18 @@
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      const observer = new MutationObserver(() => {
+        const searchInput = $('#billsTable_filter input');
+        if (searchInput.length && $('#customSearchContainer input').length === 0) {
+          searchInput.attr('placeholder', 'Search...');
+          $('#customSearchContainer').append(searchInput);
+        }
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
+    });
+  </script>
   <script src="/static/js/table.js"></script>
 </body>
 </html>
