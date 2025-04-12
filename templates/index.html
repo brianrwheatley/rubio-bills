@@ -44,7 +44,6 @@
   
 /* Mobile-responsive layout */
 @media (max-width: 768px) {
-  #billsTable_wrapper { padding-left: 2px; padding-right: 2px; }
   .container {
     padding: 0 1rem;
   }
@@ -77,6 +76,11 @@
     text-align: right;
     width: 100%;
   }
+}
+  
+table.dataTable tbody tr.odd td,
+table.dataTable tbody tr.even td {
+  background-color: transparent !important;
 }
   </style>
  </head>
