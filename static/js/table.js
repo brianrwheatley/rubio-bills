@@ -1,6 +1,6 @@
 $(document).ready(function () {
   const table = $('#billsTable').DataTable({
-    stripeClasses: [],
+    responsive: true,
     ajax: {
       url: '/data',
       dataSrc: function (json) {
