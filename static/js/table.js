@@ -1,7 +1,10 @@
 
 $(document).ready(function () {
   const table = $('#billsTable').DataTable({
-    ajax: "/data",
+    ajax: {
+      url: "/data",
+      dataSrc: "data"
+    },
     columns: [
       { data: "Session" },
       { data: "Bill" },
@@ -11,7 +14,8 @@ $(document).ready(function () {
     ],
     responsive: true,
     autoWidth: false,
-    stripeClasses: [],  // Disable zebra striping
+    stripeClasses: [],
+
     initComplete: function () {
       const data = this.api().data().toArray();
 
@@ -69,6 +73,7 @@ $(document).ready(function () {
 
       filterTable();
     },
+
     rowCallback: function (row, data) {
       $(row).removeClass("highlight-current highlight-vetoed highlight-nonrubio-current");
 
