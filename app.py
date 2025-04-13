@@ -52,7 +52,7 @@ def data():
 
 # Use this for deployment to Render
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000, debug=True)
+    app.run(host="0.0.0.0", port=10000)
 
 # Use this for local development
 #if __name__ == "__main__":
